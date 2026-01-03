@@ -1,0 +1,67 @@
+name: CodeAudit.sh Self-Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
+
+jobs:
+  self-audit:
+    name: Self Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run ESLint on JavaScript files
+      run: |
+        npm install -g eslint
+        eslint . --ext .js --format json --output-file eslint-report.json || true
+    
+    - name: Display ESLint results
+      run: |
+        if [ -f eslint-report.json ]; then
+          echo "ESLint Results:"
+          cat eslint-report.json | jq '.[] | select(.errorCount > 0 or .warningCount > 0)'
+        fi
+    
+    - name: Upload ESLint report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: eslint-report
+        path: eslint-report.json
+    
+    - name: Run security audit
+      run: npm audit --json > npm-audit.json || true
+    
+    - name: Display security audit results
+      run: |
+        if [ -f npm-audit.json ]; then
+          echo "Security Audit Results:"
+          cat npm-audit.json | jq '.vulnerabilities'
+        fi
+    
+    - name: Upload security audit report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-audit
+        path: npm-audit.json
+    
+    - name: Check for outdated dependencies
+      run: npm outdated || true
