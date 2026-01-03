@@ -2,6 +2,9 @@
  * Tool Executors
  * 
  * Executes audit tools and collects results
+ * 
+ * NOTE: Current implementations are mock/placeholder functions for scaffolding.
+ * In production, these should be replaced with actual tool execution logic.
  */
 
 const { execSync } = require('child_process');

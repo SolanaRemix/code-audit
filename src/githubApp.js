@@ -24,7 +24,7 @@ function setupGitHubApp(app) {
 
   // Health check endpoint
   if (app.route) {
-    app.route('/health').get('/health', (req, res) => {
+    app.route().get('/health', (req, res) => {
       res.status(200).json({
         status: 'healthy',
         version: require('../package.json').version,

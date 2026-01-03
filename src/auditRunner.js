@@ -94,6 +94,8 @@ async function getChangedFiles(context) {
 
 /**
  * Clone repository and checkout PR branch
+ * NOTE: This is a placeholder implementation for scaffolding.
+ * In production, implement actual git cloning using simple-git library.
  * @param {Object} context - Probot context
  * @returns {Promise<string>} Path to cloned repository
  */
@@ -101,12 +103,18 @@ async function cloneRepository(context) {
   const { payload } = context;
   const pr = payload.pull_request;
   
-  // In a real implementation, this would clone the repo
-  // For now, we'll use a simplified approach
+  // TODO: Implement actual repository cloning
+  // Example using simple-git:
+  // const git = require('simple-git');
+  // const repoPath = `/tmp/audit-${payload.repository.name}-${pr.number}`;
+  // await git.clone(payload.repository.clone_url, repoPath);
+  // await git.cwd(repoPath).checkout(pr.head.ref);
+  // return repoPath;
+  
   logger.info(`Would clone repository: ${payload.repository.clone_url}`);
   logger.info(`Would checkout branch: ${pr.head.ref}`);
   
-  // Return a mock path - in production, use simple-git or shelljs
+  // Return a mock path for scaffolding
   return `/tmp/audit-${payload.repository.name}-${pr.number}`;
 }
 

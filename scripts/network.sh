@@ -57,12 +57,22 @@ case "$COMMAND" in
     echo "Testing GitHub API connectivity..."
     
     # Test rate limit
-    RATE_LIMIT=$(curl -s https://api.github.com/rate_limit | jq -r '.rate.remaining')
-    if [ -n "$RATE_LIMIT" ]; then
-      echo "  ✅ GitHub API: OK"
-      echo "  📊 Rate limit remaining: $RATE_LIMIT"
+    if command -v jq &> /dev/null; then
+      RATE_LIMIT=$(curl -s https://api.github.com/rate_limit | jq -r '.rate.remaining')
+      if [ -n "$RATE_LIMIT" ]; then
+        echo "  ✅ GitHub API: OK"
+        echo "  📊 Rate limit remaining: $RATE_LIMIT"
+      else
+        echo "  ❌ GitHub API: Failed"
+      fi
     else
-      echo "  ❌ GitHub API: Failed"
+      # Fallback without jq
+      if curl -s https://api.github.com/rate_limit > /dev/null; then
+        echo "  ✅ GitHub API: OK"
+        echo "  ℹ️  Install 'jq' for detailed rate limit info"
+      else
+        echo "  ❌ GitHub API: Failed"
+      fi
     fi
     ;;
     

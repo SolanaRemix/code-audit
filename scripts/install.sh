@@ -62,9 +62,11 @@ if command -v pip3 &> /dev/null; then
   pip3 install --user semgrep
 fi
 
-# Install Node.js based tools globally
-echo "Installing Node.js based tools..."
-npm install -g eslint prettier
+# Install Node.js based tools
+# Note: Tools are already available via npx from package.json devDependencies
+# Only install globally if you prefer global access
+echo "Node.js based tools (ESLint, Prettier) are available via npx"
+echo "To install globally (optional): npm install -g eslint prettier"
 
 echo ""
 echo "✅ Installation complete!"
