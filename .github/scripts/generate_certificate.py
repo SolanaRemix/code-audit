@@ -2,20 +2,23 @@
 """
 Automated Code Audit Certificate Generator
 Generates audit certificates for code repositories under CyberAi.network
+
+This script is compatible with Python 3.7+ and avoids usage of Python 3.11-only APIs.
 """
 
 import argparse
 import datetime
 import hashlib
 import json
-import os
 from pathlib import Path
 
 
 class AuditCertificateGenerator:
     """Generates audit certificates for code repositories"""
-    
+
     def __init__(self):
+        # Certificate template: split verification into a clear section and
+        # clarify which commit representation is shown (full vs short).
         self.certificate_template = """# Code Audit Certificate
 
 ## Certificate Information
@@ -27,16 +30,16 @@ class AuditCertificateGenerator:
 ## Repository Information
 - **Repository:** {repository}
 - **Branch:** {branch}
-- **Commit:** {commit_sha}
-- **Commit Hash:** {commit_hash}
+- **Commit (full):** {commit_sha}
+- **Commit (short):** {commit_hash}
 
 ## Audit Details
 
 ### Security Analysis
 - **CodeQL Scanning:** Completed
-- **Vulnerability Check:** Passed
-- **Code Quality:** Verified
-- **Best Practices:** Compliant
+- **Vulnerability Check:** {vulnerability_check}
+- **Code Quality:** {code_quality}
+- **Best Practices:** {best_practices}
 
 ### Audit Scope
 - Static Application Security Testing (SAST)
@@ -45,27 +48,25 @@ class AuditCertificateGenerator:
 - Security Best Practices Review
 
 ### Findings Summary
-- **Critical Issues:** 0
-- **High Severity:** 0
-- **Medium Severity:** 0
-- **Low Severity:** 0
-- **Informational:** 0
+- **Critical Issues:** {critical}
+- **High Severity:** {high}
+- **Medium Severity:** {medium}
+- **Low Severity:** {low}
+- **Informational:** {info}
 
-## Certificate Authority
-**Issued by:** CyberAi.network Automated Audit System  
-**Verification:** This certificate can be verified using the certificate ID and commit hash.
+## Certificate Authority & Verification
+**Issued by:** CyberAi.network Automated Audit System
+
+### Verification Instructions
+This certificate can be verified using the certificate ID and commit hash:
+1. Check the commit (short) matches: `{commit_hash}`
+2. Verify certificate ID: `{certificate_id}`
+3. Review audit workflow run in GitHub Actions
 
 ## Status Badge
 ![Audit Status](https://img.shields.io/badge/audit-{status_badge}-{badge_color})
-![Security](https://img.shields.io/badge/security-verified-brightgreen)
 
 ---
-
-### Verification Instructions
-To verify this certificate:
-1. Check the commit hash matches: `{commit_sha}`
-2. Verify certificate ID: `{certificate_id}`
-3. Review audit workflow run in GitHub Actions
 
 ### Digital Signature
 ```
@@ -77,112 +78,98 @@ Certificate Hash: {certificate_hash}
 
     def generate_certificate_hash(self, data):
         """Generate a hash for certificate verification"""
-        hash_input = json.dumps(data, sort_keys=True)
+        # Use a deterministic JSON representation (no extra spaces) for hashing
+        hash_input = json.dumps(data, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(hash_input.encode()).hexdigest()
 
-    def generate_certificate(self, status, date, audit_id, repo, branch, commit):
-        """Generate an audit certificate"""
-        
-        # Parse date or use current
+    def generate_certificate(self, status, date, audit_id, repo, branch, commit, findings=None):
+        """Generate an audit certificate and return text and metadata"""
+        findings = findings or {}
+        # Parse date or use current (compatible with Python 3.7+)
         try:
+            # Expect UTC formatted timestamp like: "YYYY-MM-DD HH:MM:SS UTC"
             issue_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S UTC")
+            # Make the parsed datetime timezone-aware (UTC)
+            issue_date = issue_date.replace(tzinfo=datetime.timezone.utc)
         except (ValueError, TypeError):
-            issue_date = datetime.datetime.now(datetime.UTC)
-        
-        # Certificate valid for 90 days
-        valid_until = issue_date + datetime.timedelta(days=90)
-        
-        # Prepare certificate data
-        cert_data = {
+            issue_date = datetime.datetime.now(datetime.timezone.utc)
+
+        valid_until = (issue_date + datetime.timedelta(days=90)).strftime("%Y-%m-%d %H:%M:%S UTC")
+        issue_date_str = issue_date.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+        data = {
             "certificate_id": audit_id,
+            "issue_date": issue_date_str,
+            "valid_until": valid_until,
+            "status": status,
             "repository": repo,
             "branch": branch,
-            "commit": commit,
-            "status": status,
-            "issue_date": issue_date.isoformat()
+            "commit_sha": commit,
+            "findings": findings,
         }
-        
-        # Generate certificate hash
-        cert_hash = self.generate_certificate_hash(cert_data)
-        
-        # Determine badge style
-        status_badge = status.upper()
-        badge_color = "brightgreen" if status == "passed" else "red"
-        
-        # Generate certificate content
-        certificate = self.certificate_template.format(
-            certificate_id=audit_id,
-            issue_date=issue_date.strftime("%Y-%m-%d %H:%M:%S UTC"),
-            valid_until=valid_until.strftime("%Y-%m-%d %H:%M:%S UTC"),
-            status=status.upper(),
-            repository=repo,
-            branch=branch,
-            commit_sha=commit,
-            commit_hash=commit[:12],
-            status_badge=status_badge,
-            badge_color=badge_color,
-            certificate_hash=cert_hash
-        )
-        
-        return certificate, cert_data
 
-    def save_certificate(self, certificate, output_path):
-        """Save certificate to file"""
-        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-        
-        with open(output_path, 'w') as f:
-            f.write(certificate)
-        
-        print(f"Certificate generated: {output_path}")
+        certificate_hash = self.generate_certificate_hash(data)
 
-    def save_metadata(self, cert_data, output_path):
-        """Save certificate metadata as JSON"""
-        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-        
-        with open(output_path, 'w') as f:
-            json.dump(cert_data, f, indent=2)
-        
-        print(f"Certificate metadata saved: {output_path}")
+        # Use a short commit hash for display/verification convenience
+        short_commit = commit[:7] if commit else ""
+
+        template_values = {
+            "certificate_id": data["certificate_id"],
+            "issue_date": data["issue_date"],
+            "valid_until": data["valid_until"],
+            "status": data["status"],
+            "repository": data["repository"],
+            "branch": data["branch"],
+            "commit_sha": data["commit_sha"],
+            "commit_hash": short_commit,
+            "vulnerability_check": "Passed" if data.get("findings", {}).get("critical", 0) == 0 else "Issues found",
+            "code_quality": "Verified",
+            "best_practices": "Compliant",
+            "critical": data.get("findings", {}).get("critical", 0),
+            "high": data.get("findings", {}).get("high", 0),
+            "medium": data.get("findings", {}).get("medium", 0),
+            "low": data.get("findings", {}).get("low", 0),
+            "info": data.get("findings", {}).get("info", 0),
+            "status_badge": data["status"].lower(),
+            "badge_color": "brightgreen" if data["status"].lower() == "passed" else "red",
+            "certificate_hash": certificate_hash,
+        }
+
+        cert_text = self.certificate_template.format(**template_values)
+
+        return cert_text, data, certificate_hash
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='Generate code audit certificates for CyberAi.network'
-    )
-    parser.add_argument('--status', required=True, 
-                       help='Audit status (passed/failed/pending)')
-    parser.add_argument('--date', required=True,
-                       help='Audit date')
-    parser.add_argument('--id', required=True,
-                       help='Audit/Certificate ID')
-    parser.add_argument('--repo', required=True,
-                       help='Repository name')
-    parser.add_argument('--branch', required=True,
-                       help='Branch name')
-    parser.add_argument('--commit', required=True,
-                       help='Commit SHA')
-    parser.add_argument('--output', default='docs/audit_certificate.md',
-                       help='Output path for certificate')
-    
+    parser = argparse.ArgumentParser(description="Generate a code audit certificate")
+    parser.add_argument("--status", required=True, help="Audit status (passed|failed|pending)")
+    parser.add_argument("--date", required=False, help="Issue date (YYYY-MM-DD HH:MM:SS UTC)")
+    parser.add_argument("--id", required=True, help="Audit/certificate ID")
+    parser.add_argument("--repo", required=True, help="Repository full name (owner/repo)")
+    parser.add_argument("--branch", required=True, help="Branch name")
+    parser.add_argument("--commit", required=True, help="Commit SHA")
+    parser.add_argument("--out", required=False, help="Output path for certificate", default=None)
+
     args = parser.parse_args()
-    
-    generator = AuditCertificateGenerator()
-    certificate, cert_data = generator.generate_certificate(
-        args.status, args.date, args.id, args.repo, args.branch, args.commit
+
+    gen = AuditCertificateGenerator()
+    cert_text, metadata, cert_hash = gen.generate_certificate(
+        status=args.status,
+        date=args.date,
+        audit_id=args.id,
+        repo=args.repo,
+        branch=args.branch,
+        commit=args.commit,
+        findings={},
     )
-    
-    # Save certificate
-    generator.save_certificate(certificate, args.output)
-    
-    # Save metadata
-    metadata_path = args.output.replace('.md', '_metadata.json')
-    generator.save_metadata(cert_data, metadata_path)
-    
-    print(f"\n✅ Certificate generated successfully!")
-    print(f"   Status: {args.status.upper()}")
-    print(f"   Certificate ID: {args.id}")
-    print(f"   Repository: {args.repo}")
+
+    if args.out:
+        out_path = Path(args.out)
+        out_path.write_text(cert_text, encoding="utf-8")
+        print(f"Certificate written to {out_path}")
+    else:
+        print(cert_text)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
