@@ -12,10 +12,16 @@ on:
       - 'app.js'
       - 'package.json'
 
+permissions:
+  contents: read
+
 jobs:
   self-audit:
     name: Self-Audit CodeAudit.sh
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     
     steps:
       - uses: actions/checkout@v3
@@ -99,6 +105,8 @@ jobs:
   integration-test:
     name: Integration Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - uses: actions/checkout@v3
