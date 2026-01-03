@@ -86,8 +86,8 @@ Certificate Hash: {certificate_hash}
         # Parse date or use current
         try:
             issue_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S UTC")
-        except:
-            issue_date = datetime.datetime.utcnow()
+        except (ValueError, TypeError):
+            issue_date = datetime.datetime.now(datetime.UTC)
         
         # Certificate valid for 90 days
         valid_until = issue_date + datetime.timedelta(days=90)

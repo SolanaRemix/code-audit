@@ -2,7 +2,7 @@
 
 ![Audit Status](https://img.shields.io/badge/audit-automated-blue)
 ![Security](https://img.shields.io/badge/security-enabled-brightgreen)
-![Certificate](https://img.shields.io/badge/certificate-issuing-success)
+![Certificate](https://img.shields.io/badge/certificate-labeling-success)
 
 An automated code audit and certificate label issuing system for GitHub repositories under CyberAi.network. This system provides continuous security analysis, vulnerability detection, and automated certificate generation for code repositories.
 

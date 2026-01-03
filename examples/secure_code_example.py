@@ -105,12 +105,9 @@ def sanitize_input(user_input: str) -> str:
     Returns:
         Sanitized string safe for processing
     """
-    # Remove potentially dangerous characters
-    dangerous_chars = ['<', '>', '"', "'", '&', ';', '|', '`']
-    sanitized = user_input
-    
-    for char in dangerous_chars:
-        sanitized = sanitized.replace(char, '')
+    import html
+    # Use proper HTML escaping for web contexts
+    sanitized = html.escape(user_input)
     
     return sanitized.strip()
 

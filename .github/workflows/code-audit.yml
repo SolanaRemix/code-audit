@@ -62,7 +62,7 @@ jobs:
       run: |
         echo "audit_status=passed" >> $GITHUB_OUTPUT
         echo "audit_date=$(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_OUTPUT
-        echo "audit_id=$(uuidgen || echo "$(date +%s)-$RANDOM")" >> $GITHUB_OUTPUT
+        echo "audit_id=$(python3 -c "import uuid; print(uuid.uuid4())")" >> $GITHUB_OUTPUT
 
     - name: Generate Audit Certificate
       run: |

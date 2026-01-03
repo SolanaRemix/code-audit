@@ -85,7 +85,7 @@ Use these patterns:
 # ❌ BAD - Vulnerable to SQL Injection
 query = f"SELECT * FROM users WHERE id = {user_id}"
 
-# ✅ GOOD - Use parameterized queries
+# ✅ GOOD - Use parameterized queries (sqlite3/DB-API libraries)
 query = "SELECT * FROM users WHERE id = ?"
 cursor.execute(query, (user_id,))
 ```
