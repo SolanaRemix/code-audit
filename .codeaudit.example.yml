@@ -1,0 +1,97 @@
+# CodeAudit.sh Configuration File
+# Place this file as `.codeaudit.yml` in the root of your repository
+
+# Enable or disable CodeAudit.sh for this repository
+enabled: true
+
+# Add labels to PRs based on audit results
+addLabels: true
+
+# Audit settings
+audit:
+  # Run audit on these events
+  events:
+    - pull_request.opened
+    - pull_request.synchronize
+  
+  # Languages to audit (auto-detected if not specified)
+  languages:
+    - javascript
+    - typescript
+    - python
+    - go
+    - rust
+    - java
+  
+  # Tools to run (specify which audit tools to use)
+  tools:
+    eslint:
+      enabled: true
+      config: .eslintrc.json
+    
+    prettier:
+      enabled: true
+      config: .prettierrc
+    
+    shellcheck:
+      enabled: true
+      severity: warning
+    
+    bandit:
+      enabled: true
+      severity: medium
+    
+    semgrep:
+      enabled: true
+      config: auto
+  
+  # Thresholds for audit results
+  thresholds:
+    critical: 0
+    high: 5
+    medium: 10
+    low: 20
+  
+  # Files/directories to exclude from audit
+  exclude:
+    - node_modules/
+    - dist/
+    - build/
+    - vendor/
+    - '*.min.js'
+    - '*.test.js'
+
+# Comment settings
+comment:
+  # Post audit results as comment
+  enabled: true
+  
+  # Update existing comments instead of creating new ones
+  updateExisting: true
+  
+  # Include full report in comment
+  includeFullReport: true
+  
+  # Collapse detailed findings
+  collapseDetails: true
+
+# Labels to apply based on audit results
+labels:
+  critical: 'audit: critical'
+  high: 'audit: high'
+  medium: 'audit: medium'
+  low: 'audit: low'
+  passed: 'audit: passed'
+  failed: 'audit: failed'
+
+# Integration settings
+integrations:
+  # Slack notifications (optional)
+  slack:
+    enabled: false
+    webhookUrl: ''
+  
+  # GitHub Actions integration
+  actions:
+    enabled: true
+    failOnCritical: true

@@ -1,0 +1,52 @@
+{
+  "name": "codeaudit-sh",
+  "version": "1.0.0",
+  "description": "CodeAudit.sh - Automated code audit GitHub App built with Probot",
+  "author": "CodeAudit.sh Team",
+  "license": "MIT",
+  "homepage": "https://github.com/SolanaRemix/code-audit#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SolanaRemix/code-audit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SolanaRemix/code-audit/issues"
+  },
+  "keywords": [
+    "probot",
+    "github",
+    "code-audit",
+    "security",
+    "static-analysis",
+    "automation"
+  ],
+  "scripts": {
+    "start": "probot run ./app.js",
+    "dev": "nodemon --exec 'probot run ./app.js'",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "setup": "bash scripts/setup.sh",
+    "install-deps": "bash scripts/install.sh",
+    "deploy": "bash scripts/deploy.sh"
+  },
+  "dependencies": {
+    "probot": "^12.3.0",
+    "js-yaml": "^4.1.0",
+    "shelljs": "^0.8.5",
+    "simple-git": "^3.19.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.45.0",
+    "jest": "^29.6.1",
+    "nodemon": "^3.0.1",
+    "smee-client": "^1.2.3"
+  },
+  "engines": {
+    "node": ">= 18.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}

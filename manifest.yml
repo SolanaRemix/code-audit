@@ -1,0 +1,29 @@
+name: CodeAudit.sh
+description: >
+  Automated code audit GitHub App that analyzes pull requests for security vulnerabilities,
+  code quality issues, and best practices violations using industry-standard tools.
+
+url: https://github.com/SolanaRemix/code-audit
+
+redirect_url: https://github.com/SolanaRemix/code-audit
+
+# Webhook events
+default_events:
+  - pull_request
+  - check_run
+
+# Permissions
+default_permissions:
+  checks: write
+  contents: read
+  pull_requests: write
+  issues: write
+  statuses: write
+  metadata: read
+
+# GitHub App setup URLs
+setup_url: https://github.com/apps/codeaudit-sh/installations/new
+setup_on_update: true
+
+# Public or private
+public: true

@@ -1,0 +1,54 @@
+# Probot Configuration
+# See: https://probot.github.io/docs/configuration/
+
+# The name of your app
+name: codeaudit-sh
+
+# The description of your app
+description: Automated code audit GitHub App
+
+# The version of your app
+version: 1.0.0
+
+# HTTP server configuration
+port: 3000
+
+# Logging configuration
+logLevel: info
+
+# GitHub App settings
+github:
+  # Base URL for GitHub API (leave empty for github.com)
+  baseUrl: ''
+  
+  # Request timeout in milliseconds
+  timeout: 10000
+
+# Webhook configuration
+webhook:
+  # Path to receive webhooks
+  path: /api/github/webhooks
+  
+  # Webhook secret (set via environment variable)
+  secret: process.env.WEBHOOK_SECRET
+
+# Performance and reliability
+performance:
+  # Maximum concurrent webhooks to process
+  maxConcurrentWebhooks: 10
+  
+  # Request retry configuration
+  retry:
+    enabled: true
+    maxRetries: 3
+    retryDelay: 1000
+
+# Security
+security:
+  # Enable HTTPS in production
+  requireHttps: true
+  
+  # CORS settings
+  cors:
+    enabled: false
+    origin: '*'
