@@ -71,7 +71,9 @@ const TOOL_REGISTRY = {
       name: 'Golint',
       command: 'golint',
       description: 'Go source code linter',
-      categories: ['style']
+      categories: ['style'],
+      deprecated: true,
+      deprecationMessage: 'Golint has been deprecated since 2021. Use staticcheck or revive instead.'
     },
     gosec: {
       name: 'Gosec',
