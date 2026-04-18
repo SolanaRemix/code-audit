@@ -26,8 +26,10 @@ const TOOL_REGISTRY = {
     tslint: {
       name: 'TSLint',
       command: 'tslint',
-      description: 'TypeScript linter',
-      categories: ['quality', 'style']
+      description: 'Deprecated TypeScript linter (use ESLint with TypeScript support instead)',
+      categories: ['quality', 'style'],
+      deprecated: true,
+      deprecationMessage: 'TSLint has been deprecated since 2019. Please use ESLint with TypeScript support instead.'
     },
     eslint: {
       name: 'ESLint (TypeScript)',
