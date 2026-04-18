@@ -86,7 +86,7 @@ languages:
     tools: [pylint, bandit]
   go:
     enabled: true
-    tools: [golint, gosec]
+    tools: [staticcheck, gosec]
 
 # Severity thresholds
 thresholds:
