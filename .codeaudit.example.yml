@@ -56,7 +56,6 @@ languages:
   go:
     enabled: true
     tools:
-      - golint
       - gosec
       - staticcheck
       
