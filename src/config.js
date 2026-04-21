@@ -39,7 +39,7 @@ const DEFAULT_CONFIG = {
     },
     go: {
       enabled: true,
-      tools: ['golint', 'gosec']
+      tools: ['staticcheck', 'gosec']
     }
   },
   thresholds: {
@@ -115,40 +115,33 @@ async function loadConfig(context) {
 }
 
 /**
+ * Deep merge two objects
+ * @param {Object} target - Target object
+ * @param {Object} source - Source object
+ * @returns {Object} Merged object
+ */
+function deepMerge(target, source) {
+  const result = { ...target };
+  
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      result[key] = deepMerge(target[key] || {}, source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+  
+  return result;
+}
+
+/**
  * Merge user configuration with defaults
  * @param {Object} defaultConfig - Default configuration
  * @param {Object} userConfig - User configuration
  * @returns {Object} Merged configuration
  */
 function mergeConfig(defaultConfig, userConfig) {
-  return {
-    ...defaultConfig,
-    ...userConfig,
-    analyzers: {
-      ...defaultConfig.analyzers,
-      ...(userConfig.analyzers || {})
-    },
-    languages: {
-      ...defaultConfig.languages,
-      ...(userConfig.languages || {})
-    },
-    thresholds: {
-      ...defaultConfig.thresholds,
-      ...(userConfig.thresholds || {})
-    },
-    comments: {
-      ...defaultConfig.comments,
-      ...(userConfig.comments || {})
-    },
-    reporting: {
-      ...defaultConfig.reporting,
-      ...(userConfig.reporting || {})
-    },
-    performance: {
-      ...defaultConfig.performance,
-      ...(userConfig.performance || {})
-    }
-  };
+  return deepMerge(defaultConfig, userConfig);
 }
 
 /**

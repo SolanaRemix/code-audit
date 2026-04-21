@@ -4,6 +4,7 @@
  */
 
 const logger = require('./logger');
+const { minimatch } = require('minimatch');
 
 /**
  * Set up GitHub App with necessary event handlers and configurations
@@ -43,17 +44,8 @@ function shouldExcludeFile(filePath, excludePatterns) {
     return false;
   }
 
-  // Simple pattern matching (in production, use a proper glob library)
-  return excludePatterns.some(pattern => {
-    // Convert glob pattern to regex
-    const regex = new RegExp(
-      pattern
-        .replace(/\./g, '\\.')
-        .replace(/\*/g, '.*')
-        .replace(/\?/g, '.')
-    );
-    return regex.test(filePath);
-  });
+  // Use minimatch for proper glob pattern matching
+  return excludePatterns.some(pattern => minimatch(filePath, pattern));
 }
 
 /**

@@ -71,10 +71,19 @@ Create a `.codeaudit.yml` file in your repository root to customize the audit be
 ```yaml
 # Enable/disable specific analyzers
 analyzers:
-  security: true
-  quality: true
-  style: true
-  complexity: true
+  security:
+    enabled: true
+    severity: error
+  quality:
+    enabled: true
+    severity: warning
+  style:
+    enabled: true
+    severity: info
+  complexity:
+    enabled: true
+    max_complexity: 10
+    severity: warning
 
 # Language-specific settings
 languages:

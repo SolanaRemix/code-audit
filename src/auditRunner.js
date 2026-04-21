@@ -9,7 +9,7 @@ const { getAnalyzers } = require('./analyzers/index');
 const { executeAnalyzers } = require('./analyzers/executors');
 const { buildSummary } = require('./reporting/summaryBuilder');
 const { formatComment } = require('./reporting/commentFormatter');
-const { getChangedFiles, postPRComment, createCheckRun } = require('./githubApp');
+const { getChangedFiles, postPRComment, createCheckRun, shouldExcludeFile } = require('./githubApp');
 
 /**
  * Run code audit on the context
@@ -36,7 +36,6 @@ async function runAudit(context, config) {
 
     // Filter out excluded files
     const filesToAudit = changedFiles.filter(file => {
-      const { shouldExcludeFile } = require('./githubApp');
       return !shouldExcludeFile(file.filename, config.exclude);
     });
 
@@ -153,9 +152,14 @@ function formatCheckRunDetails(results, config) {
   let text = '## Audit Results\n\n';
   
   limitedIssues.forEach((issue, index) => {
-    text += `${index + 1}. **${issue.severity.toUpperCase()}**: ${issue.message}\n`;
+    const severity = issue.severity || 'warning';
+    const rule = issue.rule || 'unknown';
+    text += `${index + 1}. **${severity.toUpperCase()}**: ${issue.message}\n`;
     text += `   - File: ${issue.file}:${issue.line}\n`;
-    text += `   - Rule: ${issue.rule}\n\n`;
+    if (issue.rule) {
+      text += `   - Rule: ${rule}\n`;
+    }
+    text += '\n';
   });
   
   if (allIssues.length > maxIssues) {

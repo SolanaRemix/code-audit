@@ -53,6 +53,7 @@ jobs:
       run: npm ci
     
     - name: Verify app can start
+      if: ${{ secrets.TEST_PRIVATE_KEY != '' }}
       run: |
         timeout 10s npm start || code=$?
         if [[ $code -ne 124 && $code -ne 0 ]]; then
@@ -62,3 +63,9 @@ jobs:
         APP_ID: test
         WEBHOOK_SECRET: test
         PRIVATE_KEY: ${{ secrets.TEST_PRIVATE_KEY }}
+    
+    - name: Verify app can start (fork/no secrets)
+      if: ${{ secrets.TEST_PRIVATE_KEY == '' }}
+      run: |
+        echo "Skipping app startup test - TEST_PRIVATE_KEY not available (likely a fork)"
+        echo "This is expected for PRs from forks"

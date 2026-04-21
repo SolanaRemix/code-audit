@@ -60,10 +60,11 @@ case "$COMMAND" in
     echo ""
     
     if [ -f .env ]; then
-        echo "=== .env ==="
-        # Show .env without sensitive values
-        grep -v "PRIVATE_KEY\|SECRET\|TOKEN" .env || echo "(empty)"
+        echo "=== .env (non-sensitive variables only) ==="
+        # Show only safe, non-sensitive environment variables
+        grep -E "^(NODE_ENV|PORT|LOG_LEVEL|GHE_HOST)=" .env 2>/dev/null || echo "(no safe variables found)"
         echo ""
+        echo "Note: Sensitive variables (keys, secrets, tokens, passwords) are hidden for security."
     fi
     
     if [ -f .codeaudit.yml ]; then

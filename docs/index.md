@@ -66,9 +66,15 @@ Configure CodeAudit.sh to match your team's needs:
 ```yaml
 # .codeaudit.yml
 analyzers:
-  security: true
-  quality: true
-  style: true
+  security:
+    enabled: true
+    severity: error
+  quality:
+    enabled: true
+    severity: warning
+  style:
+    enabled: true
+    severity: info
 
 thresholds:
   error: 0
@@ -87,7 +93,7 @@ thresholds:
 - [Issues](https://github.com/SolanaRemix/code-audit/issues)
 - [Pull Requests](https://github.com/SolanaRemix/code-audit/pulls)
 
-## �� Contributing
+## 🤝 Contributing
 
 We welcome contributions! Check out our [Contributing Guide](https://github.com/SolanaRemix/code-audit/blob/main/CONTRIBUTING.md) to get started.
 

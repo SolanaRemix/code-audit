@@ -4,6 +4,8 @@
  */
 
 const winston = require('winston');
+const fs = require('fs');
+const path = require('path');
 
 // Determine log level from environment
 const logLevel = process.env.LOG_LEVEL || 'info';
@@ -42,6 +44,12 @@ const logger = winston.createLogger({
 
 // If we're in development, log to file as well
 if (process.env.NODE_ENV !== 'production') {
+  // Ensure logs directory exists
+  const logsDir = path.join(process.cwd(), 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+  }
+  
   logger.add(new winston.transports.File({ 
     filename: 'logs/error.log', 
     level: 'error',

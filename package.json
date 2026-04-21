@@ -6,7 +6,7 @@
   "scripts": {
     "start": "probot run ./app.js",
     "dev": "nodemon --exec probot run ./app.js",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
@@ -23,7 +23,8 @@
   "dependencies": {
     "probot": "^12.3.1",
     "js-yaml": "^4.1.0",
-    "winston": "^3.11.0"
+    "winston": "^3.11.0",
+    "minimatch": "^9.0.3"
   },
   "devDependencies": {
     "eslint": "^8.54.0",

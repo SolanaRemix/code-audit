@@ -52,8 +52,9 @@ function formatComment(summary, passed) {
     const topIssues = getTopIssuesForComment(summary, 10);
     
     topIssues.forEach((issue, index) => {
-      const severityIcon = getSeverityIcon(issue.severity);
-      comment += `${index + 1}. ${severityIcon} **${issue.severity.toUpperCase()}**: ${issue.message}\n`;
+      const severity = issue.severity || 'warning';
+      const severityIcon = getSeverityIcon(severity);
+      comment += `${index + 1}. ${severityIcon} **${severity.toUpperCase()}**: ${issue.message}\n`;
       comment += `   - **File:** \`${issue.file}:${issue.line}\`\n`;
       if (issue.rule) {
         comment += `   - **Rule:** \`${issue.rule}\`\n`;
@@ -106,7 +107,7 @@ function getSeverityIcon(severity) {
     info: 'ℹ️'
   };
   
-  return icons[severity.toLowerCase()] || '⚪';
+  return icons[(severity || 'warning').toLowerCase()] || '⚪';
 }
 
 /**

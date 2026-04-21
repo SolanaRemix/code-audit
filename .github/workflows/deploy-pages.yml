@@ -44,6 +44,8 @@ jobs:
         echo "🔗 URL: ${{ steps.deployment.outputs.page_url }}"
 
 # Configuration note:
+# This workflow uses GitHub Pages artifact deployment (not a gh-pages branch).
+# The docs/ directory is uploaded as an artifact and deployed directly.
 # To use a custom domain for GitHub Pages:
 # 1. Go to repository Settings > Pages
 # 2. Set custom domain to: codeaudit.github.io (or your preferred domain)

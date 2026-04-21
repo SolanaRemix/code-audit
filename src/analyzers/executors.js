@@ -5,6 +5,7 @@
 
 const logger = require('../logger');
 const { getToolConfig } = require('./toolRegistry');
+const { isLanguage } = require('./languageDetection');
 
 /**
  * Execute analyzers on files
@@ -62,7 +63,6 @@ async function executeAnalyzer(context, files, analyzer, config) {
   }
   
   // Filter files for this language
-  const { isLanguage } = require('./languageDetection');
   const relevantFiles = files.filter(file => isLanguage(file.filename, analyzer.language));
   
   if (relevantFiles.length === 0) {
