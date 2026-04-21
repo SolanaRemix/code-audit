@@ -1,0 +1,26 @@
+# Configuration for Probot apps
+# See https://probot.github.io/docs/configuration/
+
+# Certificate path (if not using PRIVATE_KEY env var)
+# cert: path/to/private-key.pem
+
+# Webhook secret (if not using WEBHOOK_SECRET env var)
+# secret: your-webhook-secret
+
+# App ID (if not using APP_ID env var)
+# appId: 123456
+
+# Port to run the server on
+port: 3000
+
+# Log level (trace, debug, info, warn, error, fatal)
+logLevel: info
+
+# Log format (pretty, json)
+logFormat: json
+
+# Webhook path
+webhookPath: /api/github/webhooks
+
+# Webhook proxy URL for development (Smee.io)
+# webhookProxy: https://smee.io/your-channel

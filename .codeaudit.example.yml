@@ -1,0 +1,207 @@
+# CodeAudit.sh Configuration Example
+# Copy this file to .codeaudit.yml in your repository root
+
+# Enable/disable the audit
+enabled: true
+
+# Analyzers configuration
+analyzers:
+  # Security vulnerability detection
+  security:
+    enabled: true
+    severity: error
+    
+  # Code quality analysis
+  quality:
+    enabled: true
+    severity: warning
+    
+  # Code style checking
+  style:
+    enabled: true
+    severity: info
+    
+  # Complexity analysis
+  complexity:
+    enabled: true
+    max_complexity: 10
+    severity: warning
+
+# Language-specific configuration
+languages:
+  javascript:
+    enabled: true
+    tools:
+      - eslint
+      - jshint
+    exclude_patterns:
+      - "*.min.js"
+      - "bundle.js"
+      
+  typescript:
+    enabled: true
+    tools:
+      - eslint
+      
+  python:
+    enabled: true
+    tools:
+      - pylint
+      - flake8
+      - bandit
+    exclude_patterns:
+      - "__pycache__/**"
+      - "*.pyc"
+      
+  go:
+    enabled: true
+    tools:
+      - gosec
+      - staticcheck
+      
+  rust:
+    enabled: true
+    tools:
+      - clippy
+      
+  java:
+    enabled: true
+    tools:
+      - spotbugs
+      - pmd
+      
+  ruby:
+    enabled: true
+    tools:
+      - rubocop
+      - brakeman
+      
+  php:
+    enabled: true
+    tools:
+      - phpcs
+      - psalm
+
+# Severity thresholds
+# Set to -1 to ignore, 0 to fail on any occurrence, or a positive number for threshold
+thresholds:
+  error: 0        # Fail build if any errors
+  warning: 10     # Fail build if more than 10 warnings
+  info: -1        # Ignore info-level issues
+
+# Exclude patterns (glob patterns)
+exclude:
+  - node_modules/**
+  - vendor/**
+  - dist/**
+  - build/**
+  - .git/**
+  - "*.min.js"
+  - "*.min.css"
+  - "coverage/**"
+  - "test/**"
+  - "__tests__/**"
+
+# Include patterns (glob patterns)
+# If specified, only these files will be analyzed
+# include:
+#   - src/**
+#   - lib/**
+
+# Comment settings
+comments:
+  # Post comments on pull requests
+  enabled: true
+  
+  # Comment style: 'inline' for line comments, 'review' for review comments, 'summary' for one comment
+  style: summary
+  
+  # Minimum severity to comment on
+  min_severity: warning
+  
+  # Update existing comments instead of creating new ones
+  update_existing: true
+
+# Reporting
+reporting:
+  # Generate detailed reports
+  detailed: true
+  
+  # Include code snippets in reports
+  include_snippets: true
+  
+  # Maximum number of issues to report (to avoid overwhelming PRs)
+  max_issues: 50
+
+# Custom rules (tool-specific)
+rules:
+  # ESLint rules
+  eslint:
+    max-len: [error, 120]
+    no-console: warning
+    no-debugger: error
+    
+  # Pylint rules
+  pylint:
+    max-line-length: 120
+    max-args: 7
+    
+  # Golint rules
+  golint:
+    min-confidence: 0.8
+
+# Ignore specific issues
+ignore:
+  # Ignore by file path
+  files:
+    - legacy/**
+    
+  # Ignore by rule ID
+  rules:
+    - rule-id-to-ignore
+    
+  # Ignore by message pattern
+  patterns:
+    - "TODO:"
+    - "FIXME:"
+
+# Performance settings
+performance:
+  # Maximum time for analysis (in seconds)
+  timeout: 300
+  
+  # Maximum file size to analyze (in bytes)
+  max_file_size: 1048576  # 1MB
+  
+  # Parallel execution
+  parallel: true
+  max_workers: 4
+
+# Integration settings
+integrations:
+  # GitHub status checks
+  status_checks:
+    enabled: true
+    context: "CodeAudit.sh"
+    
+  # Labels to add based on audit results
+  labels:
+    on_error:
+      - audit-failed
+      - needs-review
+    on_warning:
+      - audit-warnings
+    on_pass:
+      - audit-passed
+
+# Notification settings
+notifications:
+  # Notify on specific events
+  on_failure: true
+  on_success: false
+  
+  # Notification channels (requires additional setup)
+  channels:
+    - github_comment
+    # - slack
+    # - email

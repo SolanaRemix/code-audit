@@ -1,0 +1,42 @@
+{
+  "name": "codeaudit-sh",
+  "version": "1.0.0",
+  "description": "Automated code audit GitHub App powered by Probot",
+  "main": "app.js",
+  "scripts": {
+    "start": "probot run ./app.js",
+    "dev": "nodemon --exec probot run ./app.js",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "keywords": [
+    "probot",
+    "github",
+    "probot-app",
+    "code-audit",
+    "static-analysis"
+  ],
+  "author": "CodeAudit.sh Team",
+  "license": "MIT",
+  "dependencies": {
+    "probot": "^12.3.1",
+    "js-yaml": "^4.1.0",
+    "winston": "^3.11.0",
+    "minimatch": "^9.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.54.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.1",
+    "smee-client": "^1.2.5"
+  },
+  "engines": {
+    "node": ">= 18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SolanaRemix/code-audit.git"
+  }
+}

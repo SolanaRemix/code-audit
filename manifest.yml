@@ -1,0 +1,28 @@
+name: CodeAudit.sh
+description: Automated code audit GitHub App for security and quality analysis
+author: CodeAudit.sh Team
+url: https://github.com/SolanaRemix/code-audit
+website: https://codeaudit.github.io
+
+# GitHub App Configuration
+# This manifest can be used to register the app at:
+# https://github.com/settings/apps/new?state=YOUR_STATE
+
+default_events:
+  - pull_request
+  - push
+  - issues
+  - issue_comment
+
+default_permissions:
+  contents: read
+  issues: write
+  pull_requests: write
+  statuses: write
+  checks: write
+
+public: true
+
+hook_attributes:
+  url: https://your-app-url.com/api/github/webhooks
+  active: true

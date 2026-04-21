@@ -1,0 +1,53 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        # Upload docs directory
+        path: './docs'
+    
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+    
+    - name: Output deployment URL
+      run: |
+        echo "📄 Documentation deployed to GitHub Pages"
+        echo "🔗 URL: ${{ steps.deployment.outputs.page_url }}"
+
+# Configuration note:
+# This workflow uses GitHub Pages artifact deployment (not a gh-pages branch).
+# The docs/ directory is uploaded as an artifact and deployed directly.
+# To use a custom domain for GitHub Pages:
+# 1. Go to repository Settings > Pages
+# 2. Set custom domain to: codeaudit.github.io (or your preferred domain)
+# 3. Follow GitHub's instructions to configure DNS if using a custom domain
+# 4. The site will be available at: https://codeaudit.github.io (or your custom domain)
