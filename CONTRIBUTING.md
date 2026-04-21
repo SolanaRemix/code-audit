@@ -1,222 +1,191 @@
-# Contributing to CodeAudit.sh
+# Contributing to CyberAi.network Code Audit System
 
-Thank you for your interest in contributing to CodeAudit.sh! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing! This document explains how to work with the automated audit system.
 
-## 🤝 Code of Conduct
+## 🔄 Audit Workflow for Contributors
 
-By participating in this project, you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md). Please read it before contributing.
+When you submit a pull request, the automated audit system will:
 
-## 🚀 Getting Started
+1. **Run Security Scans**: CodeQL analyzes your code for vulnerabilities
+2. **Generate Certificate**: A unique audit certificate is created
+3. **Apply Labels**: Your PR receives status labels
+4. **Post Results**: An audit summary comment appears on your PR
 
-1. **Fork the repository** on GitHub
-2. **Clone your fork** locally:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/code-audit.git
-   cd code-audit
-   ```
-3. **Create a branch** for your changes:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-4. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-5. **Set up your development environment**:
-   ```bash
-   cp .env.example .env
-   # Configure your .env file with test app credentials
-   ```
+## ✅ Audit Requirements
 
-## 💻 Development Workflow
+For your PR to pass the audit:
 
-### Making Changes
+- No critical or high-severity security vulnerabilities
+- Code quality standards met
+- Best practices followed
+- All automated checks pass
 
-1. Make your changes in your feature branch
-2. Follow the existing code style and conventions
-3. Add or update tests as needed
-4. Update documentation if necessary
-5. Ensure all tests pass: `npm test`
-6. Lint your code: `npm run lint`
+## 🏷️ Understanding Labels
 
-### Commit Messages
+| Label | Meaning | Action Required |
+|-------|---------|-----------------|
+| `audit:passed` | ✅ All checks passed | None - ready for review |
+| `audit:failed` | ❌ Issues found | Fix identified issues |
+| `audit:pending` | ⏳ Audit in progress | Wait for completion |
+| `security:verified` | ✅ Security OK | None |
+| `security:needs-review` | ⚠️ Security concerns | Address security issues |
 
-We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+## 🔧 Running Audits Locally
 
-- `feat:` A new feature
-- `fix:` A bug fix
-- `docs:` Documentation changes
-- `style:` Code style changes (formatting, etc.)
-- `refactor:` Code refactoring
-- `test:` Adding or updating tests
-- `chore:` Maintenance tasks
+While automated audits run on the server, you can run basic checks locally:
 
-Example:
-```
-feat: add support for Rust static analysis
-fix: resolve issue with Python analyzer timeout
-docs: update installation instructions
+### Python Code
+```bash
+# Install dependencies
+pip install pylint bandit safety
+
+# Run linting
+pylint your_file.py
+
+# Security check
+bandit -r .
+
+# Dependency check
+safety check
 ```
 
-### Running Tests
+### JavaScript/Node.js
+```bash
+# Install dependencies
+npm install eslint
+
+# Run linting
+npx eslint .
+
+# Security audit
+npm audit
+```
+
+## 🐛 If Your Audit Fails
+
+1. **Read the Audit Report**: Check the PR comment for details
+2. **View Full Logs**: Go to Actions tab → Click on failed workflow
+3. **Fix Issues**: Address identified problems
+4. **Push Changes**: Audit runs automatically on new commits
+5. **Request Help**: Comment on PR if you need assistance
+
+## 📝 Code Guidelines
+
+To pass audits consistently:
+
+### Security Best Practices
+- Validate all user inputs
+- Use parameterized queries (no SQL injection)
+- Avoid hardcoded secrets or credentials
+- Implement proper error handling
+- Use secure dependencies (no known vulnerabilities)
+
+### Code Quality
+- Follow language-specific style guides
+- Write clear, maintainable code
+- Add comments for complex logic
+- Keep functions small and focused
+- Use meaningful variable names
+
+### Testing
+- Include tests for new features
+- Ensure tests pass locally before pushing
+- Add security-focused test cases
+- Test edge cases and error conditions
+
+## 🔐 Security-Sensitive Changes
+
+If your PR involves security-sensitive code:
+
+1. **Request Manual Review**: Use the manual audit request template
+2. **Document Security Considerations**: Explain your approach
+3. **Add Tests**: Include security-focused tests
+4. **Wait for Approval**: Security changes require thorough review
+
+## 📊 Viewing Your Certificate
+
+After audit completion:
+
+1. Go to the Actions tab
+2. Click on your workflow run
+3. Download the audit certificate artifact
+4. Review the detailed report
+
+## 🚀 Triggering Manual Audits
+
+To manually trigger an audit:
 
 ```bash
-# Run all tests
-npm test
+# Via GitHub CLI
+gh workflow run code-audit.yml
 
-# Run tests in watch mode
-npm run test:watch
-
-# Run linter
-npm run lint
-
-# Fix linting issues automatically
-npm run lint:fix
+# Or use the GitHub UI
+Actions → Automated Code Audit → Run workflow
 ```
 
-### Local Development
+## 🤝 Development Workflow
 
-For local development with webhook testing:
+```bash
+# 1. Fork and clone
+git clone https://github.com/YOUR_USERNAME/code-audit.git
+cd code-audit
 
-1. Set up a webhook proxy using [Smee.io](https://smee.io/)
-2. Add the Smee channel URL to your `.env`:
-   ```
-   WEBHOOK_PROXY_URL=https://smee.io/your-channel
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
+# 2. Create feature branch
+git checkout -b feature/your-feature
 
-## 📋 Pull Request Process
+# 3. Make changes
+# ... edit files ...
 
-1. **Update documentation**: Ensure README and other docs reflect your changes
-2. **Update tests**: Add or update tests to cover your changes
-3. **Run the test suite**: Ensure all tests pass
-4. **Update CHANGELOG**: Add an entry describing your changes (if applicable)
-5. **Push to your fork**:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-6. **Create a Pull Request** on GitHub with:
-   - Clear description of the changes
-   - Reference to related issues (if any)
-   - Screenshots (if UI changes)
-   - Test results
+# 4. Commit changes
+git add .
+git commit -m "Description of changes"
 
-### PR Requirements
+# 5. Push to your fork
+git push origin feature/your-feature
 
-- [ ] Tests pass (`npm test`)
-- [ ] Code is linted (`npm run lint`)
-- [ ] Documentation is updated
-- [ ] Commit messages follow conventions
-- [ ] PR description is clear and complete
+# 6. Create PR
+# Audit runs automatically
 
-## 🐛 Reporting Bugs
+# 7. Address any audit issues
+# ... fix problems ...
+git commit -am "Fix audit issues"
+git push
 
-When reporting bugs, please include:
-
-1. **Description**: Clear description of the issue
-2. **Steps to reproduce**: Detailed steps to reproduce the behavior
-3. **Expected behavior**: What you expected to happen
-4. **Actual behavior**: What actually happened
-5. **Environment**:
-   - OS and version
-   - Node.js version
-   - CodeAudit.sh version
-6. **Logs**: Relevant log output (sanitize sensitive data)
-7. **Screenshots**: If applicable
-
-## 💡 Suggesting Features
-
-We love feature suggestions! Please:
-
-1. Check if the feature has already been suggested
-2. Create a new issue with the `enhancement` label
-3. Provide:
-   - Clear description of the feature
-   - Use cases and benefits
-   - Proposed implementation (if you have ideas)
-   - Examples from other tools (if applicable)
-
-## 🎨 Code Style
-
-We use ESLint to enforce code style. Key points:
-
-- Use 2 spaces for indentation
-- Use single quotes for strings
-- Add semicolons at the end of statements
-- Use async/await over promises when possible
-- Write descriptive variable and function names
-- Add JSDoc comments for functions
-
-Example:
-```javascript
-/**
- * Run code audit on the given context
- * @param {Object} context - Probot context object
- * @param {Object} config - Audit configuration
- * @returns {Promise<Object>} Audit results
- */
-async function runAudit(context, config) {
-  // Implementation
-}
+# 8. Wait for approval
+# Audit passes → PR reviewed → Merged
 ```
 
-## 🧪 Testing Guidelines
+## 📚 Additional Resources
 
-- Write unit tests for new functions
-- Write integration tests for new features
-- Aim for high code coverage
-- Use descriptive test names
-- Mock external dependencies
+- [GitHub CodeQL Documentation](https://codeql.github.com/docs/)
+- [Security Best Practices](https://docs.github.com/en/code-security)
+- [CI/CD with GitHub Actions](https://docs.github.com/en/actions)
 
-Example:
-```javascript
-describe('auditRunner', () => {
-  describe('runAudit', () => {
-    it('should return audit results for valid context', async () => {
-      // Test implementation
-    });
+## 💬 Getting Help
 
-    it('should handle errors gracefully', async () => {
-      // Test implementation
-    });
-  });
-});
-```
+- **Audit Questions**: Comment on your PR
+- **Bug Reports**: Open an issue
+- **Security Concerns**: Use security advisories (not public issues)
 
-## 📚 Documentation
+## 🎯 Contribution Types
 
-Good documentation is crucial. When contributing:
+We welcome:
 
-- Update README.md if adding features or changing behavior
-- Add JSDoc comments to new functions
-- Update configuration examples
-- Add examples for new features
-- Keep language clear and concise
+- **Bug Fixes**: Improvements to audit system
+- **New Features**: Enhanced scanning capabilities
+- **Documentation**: Better guides and examples
+- **Test Cases**: Additional security tests
+- **Performance**: Optimization improvements
 
-## 🏷️ Issue Labels
+## ✨ Recognition
 
-- `bug`: Something isn't working
-- `enhancement`: New feature or request
-- `documentation`: Documentation improvements
-- `good first issue`: Good for newcomers
-- `help wanted`: Extra attention needed
-- `question`: Further information requested
-- `wontfix`: This will not be worked on
-
-## 📞 Getting Help
-
-- **GitHub Discussions**: Ask questions and discuss ideas
-- **GitHub Issues**: Report bugs and request features
-- **Documentation**: Check our docs and README
-
-## 🙏 Recognition
-
-Contributors will be recognized in:
-- README.md contributors section
+Contributors who help improve the audit system will be recognized in:
 - Release notes
-- Project credits
+- CONTRIBUTORS.md file
+- GitHub insights
 
-Thank you for contributing to CodeAudit.sh! 🎉
+---
+
+**Remember**: All contributions go through the same audit process. This ensures consistent security and quality across the entire codebase.
+
+Thank you for contributing to CyberAi.network! 🚀

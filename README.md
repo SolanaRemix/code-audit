@@ -1,195 +1,270 @@
-# CodeAudit.sh 🔍
+# CyberAi.network - Automated Code Audit & Certificate System
 
-> Automated code audit GitHub App powered by Probot
+![Audit Status](https://img.shields.io/badge/audit-automated-blue)
+![Security](https://img.shields.io/badge/security-enabled-brightgreen)
+![Certificate](https://img.shields.io/badge/certificate-labeling-success)
 
-CodeAudit.sh is a powerful GitHub App that automatically audits your code for security vulnerabilities, code quality issues, and best practices violations. It integrates seamlessly with your pull request workflow to catch issues before they reach production.
+An automated code audit and certificate label issuing system for GitHub repositories under CyberAi.network. This system provides continuous security analysis, vulnerability detection, and automated certificate generation for code repositories.
 
-## ✨ Features
+## 🔍 Overview
 
-- 🔒 **Security Analysis**: Detect common security vulnerabilities
-- 📊 **Code Quality**: Analyze code quality and maintainability
-- 🎯 **Language Support**: Multi-language static analysis
-- 🤖 **Automated Reviews**: Automatic PR comments with findings
-- ⚙️ **Customizable**: Configure rules and thresholds per repository
-- 🚀 **Fast**: Efficient analysis with minimal overhead
+This repository implements an enterprise-grade automated code audit system that:
 
-## 🚀 Quick Start
+- **Automatically scans code** for security vulnerabilities using GitHub's CodeQL
+- **Issues audit certificates** with unique IDs and verification hashes
+- **Applies labels** to pull requests based on audit results
+- **Generates reports** with detailed security analysis
+- **Maintains audit history** with artifact retention
+
+## 🚀 Features
+
+### Automated Security Scanning
+- CodeQL integration for comprehensive security analysis
+- Multi-language support (JavaScript, Python, and extensible to others)
+- Scheduled weekly audits and on-demand triggers
+- Real-time pull request scanning
+
+### Certificate Issuance System
+- Unique certificate ID generation for each audit
+- Digital signature with SHA-256 hashing
+- 90-day certificate validity period
+- Verification instructions included
+
+### Intelligent Labeling
+- Automatic label creation and management
+- Status labels: `audit:passed`, `audit:failed`, `audit:pending`
+- Security labels: `security:verified`, `security:needs-review`
+- Certificate tracking: `certificate:issued`
+
+### Audit Reports
+- Markdown-formatted certificates
+- JSON metadata for programmatic access
+- Artifact preservation (90-day retention)
+- PR comments with audit summaries
+
+## 📋 How It Works
+
+### Workflow Triggers
+
+The audit system runs automatically on:
+- **Push** to main/master/develop branches
+- **Pull requests** to main/master/develop branches
+- **Scheduled** weekly scans (Mondays at 9:00 AM UTC)
+- **Manual** workflow dispatch
+
+### Audit Process
+
+1. **Code Checkout**: Repository code is checked out
+2. **CodeQL Analysis**: Security scanning using GitHub's CodeQL
+3. **Audit Execution**: Comprehensive security audit performed
+4. **Certificate Generation**: Unique certificate created with digital signature
+5. **Label Application**: Appropriate labels applied to PRs
+6. **Report Upload**: Certificate and metadata uploaded as artifacts
+7. **Notification**: PR comment posted with audit summary
+
+## 🏷️ Audit Labels
+
+| Label | Color | Description |
+|-------|-------|-------------|
+| `audit:passed` | 🟢 Green | Code audit passed successfully |
+| `audit:failed` | 🔴 Red | Code audit failed - needs attention |
+| `audit:pending` | 🟡 Yellow | Code audit in progress |
+| `security:verified` | 🟢 Green | Security verification completed |
+| `security:needs-review` | 🔴 Red | Security review required |
+| `certificate:issued` | 🔵 Blue | Audit certificate issued |
+
+## 📜 Certificate Structure
+
+Each audit generates a certificate containing:
+
+- **Certificate ID**: Unique identifier (UUID)
+- **Issue Date**: Timestamp of audit
+- **Validity Period**: 90 days from issue date
+- **Status**: Passed/Failed/Pending
+- **Repository Info**: Full repository and commit details
+- **Security Analysis**: Scan results and findings
+- **Digital Signature**: SHA-256 hash for verification
+
+### Example Certificate
+
+```markdown
+# Code Audit Certificate
+
+## Certificate Information
+- **Certificate ID:** abc123-def456-ghi789
+- **Issue Date:** 2026-01-03 12:00:00 UTC
+- **Valid Until:** 2026-04-03 12:00:00 UTC
+- **Status:** PASSED
+
+## Repository Information
+- **Repository:** SolanaRemix/code-audit
+- **Branch:** main
+- **Commit:** abc123def456
+
+[... full certificate details ...]
+```
+
+## 🔧 Setup & Configuration
 
 ### Prerequisites
 
-- Node.js 18.0.0 or higher
-- A GitHub App with appropriate permissions
-- Webhook endpoint (or Smee.io for local development)
+- GitHub repository with Actions enabled
+- Appropriate permissions for security events and labels
+- Python 3.11+ (for certificate generation)
 
 ### Installation
 
-1. **Clone the repository**
+1. **Clone the Repository**
    ```bash
    git clone https://github.com/SolanaRemix/code-audit.git
    cd code-audit
    ```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or use the install script
-   ./scripts/install.sh
-   ```
+2. **Enable GitHub Actions**
+   - Workflows are automatically enabled when pushed to your repository
+   - Ensure Security events permissions are granted
 
-3. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your GitHub App credentials
-   ```
+3. **Configure Languages**
+   - Edit `.github/workflows/code-audit.yml`
+   - Modify the `matrix.language` array to include your languages:
+     ```yaml
+     matrix:
+       language: [ 'javascript', 'python', 'go', 'java' ]
+     ```
 
-4. **Set up your GitHub App**
-   - Create a new GitHub App at https://github.com/settings/apps
-   - Set webhook URL (or use Smee.io for development)
-   - Configure permissions: `contents: read`, `pull_requests: write`, `issues: write`
-   - Subscribe to events: `pull_request`, `push`
-   - Generate and download a private key
+### Customization
 
-5. **Configure the app**
-   ```bash
-   # Update .env with your values
-   APP_ID=your_app_id
-   PRIVATE_KEY=path/to/private-key.pem
-   WEBHOOK_SECRET=your_webhook_secret
-   ```
+#### Adding More Languages
 
-6. **Start the app**
-   ```bash
-   npm start
-   # or for development with auto-reload
-   npm run dev
-   ```
-
-## 📖 Configuration
-
-Create a `.codeaudit.yml` file in your repository root to customize the audit behavior:
+Edit `.github/workflows/code-audit.yml`:
 
 ```yaml
-# Enable/disable specific analyzers
-analyzers:
-  security:
-    enabled: true
-    severity: error
-  quality:
-    enabled: true
-    severity: warning
-  style:
-    enabled: true
-    severity: info
-  complexity:
-    enabled: true
-    max_complexity: 10
-    severity: warning
-
-# Language-specific settings
-languages:
-  javascript:
-    enabled: true
-    tools: [eslint, jshint]
-  python:
-    enabled: true
-    tools: [pylint, bandit]
-  go:
-    enabled: true
-    tools: [staticcheck, gosec]
-
-# Severity thresholds
-thresholds:
-  error: 0      # Fail if any errors found
-  warning: 10   # Fail if more than 10 warnings
-  info: -1      # Ignore info messages
-
-# Exclude patterns
-exclude:
-  - node_modules/**
-  - dist/**
-  - build/**
-  - "*.min.js"
-
-# Custom rules
-rules:
-  max-line-length: 120
-  no-console: error
+matrix:
+  language: [ 'javascript', 'python', 'go', 'java', 'cpp', 'csharp' ]
 ```
 
-See `.codeaudit.example.yml` for a complete configuration example.
+#### Adjusting Scan Schedule
 
-## 🔧 Scripts
+Modify the cron expression:
 
-The `scripts/` directory contains utility scripts for various operations:
-
-- **setup.sh**: Initial setup and configuration
-- **install.sh**: Install dependencies and tools
-- **deploy.sh**: Deploy to production (Vercel, Heroku, etc.)
-- **ui.sh**: Manage UI components (if applicable)
-- **db.sh**: Database operations (if applicable)
-- **updates.sh**: Update dependencies and tools
-- **api.sh**: API testing and management
-- **config.sh**: Configuration management
-- **network.sh**: Network diagnostics and testing
-
-## 🏗️ Architecture
-
+```yaml
+schedule:
+  - cron: '0 9 * * 1'  # Weekly on Mondays at 9 AM UTC
 ```
-.
-├── app.js                    # Main application entry point
-├── src/
-│   ├── config.js             # Configuration loader
-│   ├── logger.js             # Logging utility
-│   ├── githubApp.js          # GitHub App setup
-│   ├── auditRunner.js        # Main audit orchestrator
-│   ├── analyzers/
-│   │   ├── index.js          # Analyzer registry
-│   │   ├── languageDetection.js
-│   │   ├── toolRegistry.js   # Available analysis tools
-│   │   └── executors.js      # Tool execution logic
-│   └── reporting/
-│       ├── summaryBuilder.js # Build audit summaries
-│       └── commentFormatter.js # Format PR comments
-├── scripts/                  # Utility scripts
-└── .github/workflows/        # CI/CD workflows
+
+#### Certificate Validity Period
+
+Edit `.github/scripts/generate_certificate.py`:
+
+```python
+valid_until = issue_date + datetime.timedelta(days=90)  # Change 90 to desired days
+```
+
+## 📊 Viewing Audit Results
+
+### In Pull Requests
+
+Audit results appear as:
+1. **Labels** on the PR
+2. **Comments** with detailed audit summary
+3. **Workflow status** checks
+
+### In GitHub Actions
+
+1. Navigate to **Actions** tab
+2. Select **Automated Code Audit** workflow
+3. View run details and download artifacts
+
+### Downloading Certificates
+
+1. Go to workflow run
+2. Scroll to **Artifacts** section
+3. Download `audit-certificate-[ID]`
+
+## 🛡️ Security Features
+
+- **Static Analysis**: CodeQL security and quality queries
+- **Vulnerability Detection**: Automatic identification of security issues
+- **Best Practices**: Code quality and compliance checking
+- **Dependency Scanning**: Detection of vulnerable dependencies
+- **Audit Trail**: Complete history of all audits
+
+## 📈 Integration with CI/CD
+
+This system integrates seamlessly with your existing CI/CD pipeline:
+
+```yaml
+# Example: Require audit to pass before merge
+jobs:
+  deploy:
+    needs: security-audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        run: ./deploy.sh
+```
+
+## 🔐 Certificate Verification
+
+To verify an audit certificate:
+
+1. **Check Certificate ID**: Ensure it matches the workflow run
+2. **Verify Commit Hash**: Confirm it corresponds to the audited commit
+3. **Validate Digital Signature**: Use the certificate hash for verification
+4. **Check Validity Period**: Ensure certificate hasn't expired
+
+## 📝 Example Usage
+
+### Manual Trigger
+
+```bash
+# Via GitHub CLI
+gh workflow run code-audit.yml
+
+# Via GitHub UI
+Actions → Automated Code Audit → Run workflow
+```
+
+### API Access
+
+Certificates include metadata JSON for programmatic access:
+
+```json
+{
+  "certificate_id": "abc123-def456",
+  "repository": "SolanaRemix/code-audit",
+  "status": "passed",
+  "issue_date": "2026-01-03T12:00:00"
+}
 ```
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on:
+Contributions are welcome! Please:
 
-- Code of Conduct
-- Development workflow
-- Submitting pull requests
-- Reporting issues
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+5. Ensure audit passes
 
-## 📝 License
+## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 💖 Sponsors
-
-Support this project! See [SPONSORS.md](SPONSORS.md) for sponsorship opportunities.
+This project is part of the CyberAi.network security infrastructure.
 
 ## 🔗 Links
 
-- [GitHub App Manifest](manifest.yml)
-- [Documentation](docs/index.md)
-- [GitHub Pages](https://codeaudit.github.io) (once configured)
-- [Issues](https://github.com/SolanaRemix/code-audit/issues)
-- [Pull Requests](https://github.com/SolanaRemix/code-audit/pulls)
+- [GitHub Security Documentation](https://docs.github.com/en/code-security)
+- [CodeQL Documentation](https://codeql.github.com/docs/)
+- [CyberAi.network](https://github.com/CyberIntellAI)
 
-## 📊 Status
+## 💬 Support
 
-[![CodeAudit App](https://github.com/SolanaRemix/code-audit/actions/workflows/codeaudit-app.yml/badge.svg)](https://github.com/SolanaRemix/code-audit/actions/workflows/codeaudit-app.yml)
-[![Self Test](https://github.com/SolanaRemix/code-audit/actions/workflows/codeaudit-self-test.yml/badge.svg)](https://github.com/SolanaRemix/code-audit/actions/workflows/codeaudit-self-test.yml)
-
-## 🙏 Acknowledgments
-
-- Built with [Probot](https://probot.github.io/)
-- Inspired by the GitHub security and code quality community
+For issues, questions, or suggestions:
+- Open an issue in this repository
+- Review existing audit workflow runs
+- Check the documentation
 
 ---
 
-Made with ❤️ by the CodeAudit.sh team
-
+**Powered by CyberAi.network** | **Automated Security Audit System** | **Version 1.0.0** 
